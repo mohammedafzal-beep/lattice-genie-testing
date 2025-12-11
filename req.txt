@@ -5,3 +5,4 @@ openai
 pillow
 numpy-stl
 numpy
+pydrive2
