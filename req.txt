@@ -6,3 +6,4 @@ pillow
 numpy-stl
 numpy
 pydrive2
+pyvista
