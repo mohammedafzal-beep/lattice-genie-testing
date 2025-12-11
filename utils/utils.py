@@ -25,7 +25,7 @@ import datetime
 from stl import mesh
 import numpy as np
 from utils.dataloader import log_event
-from utils.dataloader import log_to_drive,log_close_app
+from utils.dataloader import log_to_drive,log_close_app, process_log_submission
 def clear_temporary_log():
     src_path = '.logs/log_slider_changes_temporary.jsonl'
         # Read the existing content (if any)
@@ -49,18 +49,20 @@ def cleanup_stl_files_and_update_drive():
     BUTTON_HISTORY = '.logs/button_history.jsonl'
     LOG_SLIDER_CHANGES_PERMANENT = '.logs/log_slider_changes_permanent.jsonl'
     LOG_SUBMISSION = '.logs/log_submission.jsonl'
+    LOG_SUBMISSION_FINAL = '.logs/log_submission_final.jsonl'
 
     LOG_FILES_LIST = [ALL_LOGS, CHAT_HISTORY, BUTTON_HISTORY, LOG_SLIDER_CHANGES_PERMANENT, 
-    LOG_SUBMISSION]
+    LOG_SUBMISSION, LOG_SUBMISSION_FINAL]
 
-
+    process_log_submission(LOG_SUBMISSION)
     ALL_LOGS_drive, CHAT_HISTORY_drive = "1eTJ0qRUJNLrlHkS9uZkc5UbTr5Ax5vxQ", "1ojmP_z1W1Q41velLHAjmhL1XmN-Sz7xt"
     BUTTON_HISTORY_drive = '1GU9Wg2bDDt2zhjqZNodwKr4oZeK-5_RB'
     LOG_SLIDER_CHANGES_PERMANENT_drive = '1jjcXv9vuy07ED1NSjJsdgP4NrgYk0bru'
     LOG_SUBMISSION_DRIVE = '1g8LWArYUFgTE0Js4DgUM9ei9gMvA5vDG'
-    
+    LOG_SUBMISSION_FINAL_drive = '1DpmkvIHFNmHfxnjzYmbflKNfKRp2vI19'
+
     DRIVE_FILES_LIST = [ALL_LOGS_drive, CHAT_HISTORY_drive, BUTTON_HISTORY_drive, 
-    LOG_SLIDER_CHANGES_PERMANENT_drive, LOG_SUBMISSION_DRIVE]
+    LOG_SLIDER_CHANGES_PERMANENT_drive, LOG_SUBMISSION_DRIVE, LOG_SUBMISSION_FINAL_drive]
     
     for i in range(len(LOG_FILES_LIST)):
         log_to_drive(LOG_FILES_LIST[i], DRIVE_FILES_LIST[i])
@@ -542,12 +544,12 @@ def subtype_selection_to_dict_key(data):
     st.session_state['selected_type_list'] = [0,1]
   st.session_state['selected_type_list'].append(selected_type)
   
-  if len(st.session_state['selected_type_list']) > 1:
+  if len(st.session_state['selected_type_list']) > 2:
     log_event(f'Structure type selection box: {selected_type}', 'Pro Mode')
   subtype_list = list(types.get(selected_type, {}).keys()) if types.get(selected_type) else ['Default']
   selected_subtype = st.selectbox('Subtype', subtype_list, index=subtype_index)
   st.session_state['selected_subtype_list'].append(selected_subtype)
-  if len(st.session_state['selected_subtype_list']) > 1:
+  if len(st.session_state['selected_subtype_list']) > 2:
     log_event(f'Subtype selection box: {selected_subtype}', 'Pro Mode')
 
   # derive dict_key
