@@ -1,0 +1,7 @@
+streamlit-stl
+streamlit
+scikit-image
+openai
+pillow
+numpy-stl
+numpy

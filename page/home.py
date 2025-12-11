@@ -1,0 +1,103 @@
+import streamlit as st
+from components.viewer import show_stl_thumbnail_home
+from components.chat import handle_user_input
+from components.parameter_ui import show_parameter_sliders
+from columns.left_col import left_column
+from columns.right_col import right_column
+from utils.dataloader import log_event
+
+def render_home(data):
+    st.markdown("""
+    <div class='center'>
+      <h1 class='padding'>✨ Lattice Genie</h1>
+      <h5 class='center unbold bottom-margin'>Lattice Genie can generate lattice structures based on parameters</h5>
+    </div>
+                <style>block-container, section.main > div {
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+}
+.bottom-margin {margin-bottom: -38px !important;}
+/* your element move */
+.padding {
+  margin-top: -57px !important;
+    }
+  .center { text-align: center; }
+    .unbold { font-weight: normal !important; }
+    .padding {padding-top: 20px}
+  .stDownloadButton button { display: block; margin-left: auto; margin-right: auto; }
+  [data-testid='stHeaderActionElements'] {display: none;}
+
+</style>
+
+    """, unsafe_allow_html=True)
+    display_thumbnails(data["crystal_images"],'Chat mode')
+    st.markdown("---")
+    st.markdown("<div class='center' style='margin-bottom:5px;'><h2 >💬 Ask to configure lattice:</h2></div>", unsafe_allow_html=True)
+   
+    st.session_state['gen_struc'] = [0,0]
+    with st.container():
+      handle_user_input(data)
+      if (st.session_state['gen_struc'][-2] == True) and (st.session_state['gen_struc'][-1] == False):
+        st.session_state['stl_files'][st.session_state['stl_path']] = [st.session_state["dict_key"], 
+        st.session_state['current_params']]
+      if st.session_state.get("confirmed_params"):
+        show_parameter_sliders(data,'Chat mode')
+
+def render_home_dropdown_version(data):
+    
+    st.markdown("""
+    <div class='center'>
+      <h1 class='padding'>✨ Lattice Genie</h1>
+      <h5 class='center unbold bottom-margin'>Lattice Genie can generate lattice structures based on parameters</h5>
+    </div>
+                <style>block-container, section.main > div {
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+}
+
+/* your element move */
+.padding {
+  margin-top: -57px !important;
+    }
+  .center { text-align: center; }
+    .unbold { font-weight: normal !important; } .bottom-margin {margin-bottom: -38px !important;}
+  .stDownloadButton button { display: block; margin-left: auto; margin-right: auto; }
+  [data-testid='stHeaderActionElements'] {display: none;}
+
+</style>
+    """, unsafe_allow_html=True)
+    display_thumbnails(data["crystal_images"],'Pro mode')
+    st.markdown("---")
+    left_col, right_col = st.columns([1,2])
+    st.session_state['selected_subtype_list'] = [0,1]
+    st.session_state['switch'] = False
+# Use the functions inside the with blocks
+    with left_col:
+        left_column(data)
+    
+    with st.sidebar:
+      if 'confirm' in st.session_state and st.session_state["confirm"]:
+          if 'stl_files' not in st.session_state:
+            st.session_state['stl_files'] = {}
+          st.session_state['stl_files'][st.session_state['stl_path']] = [st.session_state["dict_key"], 
+          st.session_state['current_params']]
+
+      show_parameter_sliders(data,'Pro mode')
+
+    with right_col:
+       right_column()
+    
+    
+def display_thumbnails(images,mode):
+    cols = st.columns(len(images))
+    for idx, (name, img_path) in enumerate(images.items()):
+        with cols[idx]:
+            try:
+                show_stl_thumbnail_home(name, img_path)
+            except:
+                st.error(f"Couldn't load {name} image.")
+            #st.markdown(f"<h4 style='text-align:center;font-weight: normal !important;'>{name}</h4>", unsafe_allow_html=True)
+            with st.columns([1,18,1])[1]:
+              if st.button(name,key=f'btn_{name}'):
+                st.session_state[f'go_{name}'] = True
+                st.rerun()
