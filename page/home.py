@@ -69,7 +69,7 @@ def render_home_dropdown_version(data):
     display_thumbnails(data["crystal_images"],'Pro mode')
     st.markdown("---")
     left_col, right_col = st.columns([1,2])
-    st.session_state['selected_subtype_list'] = [0,1]
+    st.session_state['selected_subtype_list'] = [0,0]
     st.session_state['switch'] = False
 # Use the functions inside the with blocks
     with left_col:

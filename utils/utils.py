@@ -64,10 +64,11 @@ def cleanup_stl_files_and_update_drive():
     DRIVE_FILES_LIST = [ALL_LOGS_drive, CHAT_HISTORY_drive, BUTTON_HISTORY_drive, 
     LOG_SLIDER_CHANGES_PERMANENT_drive, LOG_SUBMISSION_DRIVE, LOG_SUBMISSION_FINAL_drive]
     
+    log_close_app()
     for i in range(len(LOG_FILES_LIST)):
         log_to_drive(LOG_FILES_LIST[i], DRIVE_FILES_LIST[i])
-    log_close_app()
-    print("STL files cleared and drive jsonl files updated")
+        print(f"{DRIVE_FILES_LIST[i]} updated")
+    print("drive jsonl files updated")
 # --- Display a fallback image if STL rendering fails ---
 def backup(display, img_path):
     if not display:
@@ -541,16 +542,12 @@ def subtype_selection_to_dict_key(data):
     [type_index, subtype_index] = [0,0]
   selected_type = st.selectbox('Structure type', type_list, index=type_index)
   if 'selected_type_list' not in st.session_state:
-    st.session_state['selected_type_list'] = [0,1]
+    st.session_state['selected_type_list'] = [0,0]
   st.session_state['selected_type_list'].append(selected_type)
   
-  if len(st.session_state['selected_type_list']) > 2:
-    log_event(f'Structure type selection box: {selected_type}', 'Pro Mode')
   subtype_list = list(types.get(selected_type, {}).keys()) if types.get(selected_type) else ['Default']
   selected_subtype = st.selectbox('Subtype', subtype_list, index=subtype_index)
   st.session_state['selected_subtype_list'].append(selected_subtype)
-  if len(st.session_state['selected_subtype_list']) > 2:
-    log_event(f'Subtype selection box: {selected_subtype}', 'Pro Mode')
 
   # derive dict_key
   dict_key = types[selected_type][selected_subtype]
@@ -558,4 +555,9 @@ def subtype_selection_to_dict_key(data):
   st.session_state['selected_subtype'] = selected_subtype
   st.session_state['selected_dict_key'] = dict_key
 
+  if st.session_state['selected_subtype_list'][-2] != st.session_state['selected_subtype_list'][-1] or \
+            st.session_state['selected_type_list'][-2] != st.session_state['selected_type_list'][-1]:
+
+    log_event(f"Selected type: {st.session_state['selected_type_list'][-1]}", "Pro Mode")
+    log_event(f"Selected subtype: {st.session_state['selected_subtype_list'][-1]}", "Pro Mode")
 

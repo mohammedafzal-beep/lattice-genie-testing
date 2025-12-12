@@ -12,31 +12,34 @@ def run_app():
     init_state()
     nav_bar()
     data = load_data()
+    log_event("App opened", "Chat Mode")
     reset_home_flag('Chat mode')
     page = st.sidebar.radio('', data["pages"], key="current_page")
     count = 0
     atexit.register(cleanup_stl_files_and_update_drive)
     if page == "Home":
         if count != 0:
-            log_event(page,'Chat mode')
+            log_event(f'Radio button: Home','Chat mode')
         render_home(data)
         count += 1
     else:
         render_generic_page(page, data)
-        log_event(page,'Chat mode')
+        log_event(f'Radio button: {page}','Chat mode')
 
 def run_app_dropdown_version():
     init_state_dropdown_version()
     nav_bar()
     data = load_data()
     reset_home_flag('Pro mode')
+    log_event("App opened", "Pro Mode")
     page = st.sidebar.radio('', data["pages"], key="current_page")
     atexit.register(cleanup_stl_files_and_update_drive)
+    count = 0
     if page == "Home":
         if count != 0:
-            log_event(page,'Chat mode')
-        render_home(data)
+            log_event(f'Radio button: Home','Pro mode')
+        render_home_dropdown_version(data)
         count += 1
     else:
         render_generic_page(page, data)
-        log_event(page,'Pro mode')
+        log_event(f'Radio button: {page}','Pro mode')

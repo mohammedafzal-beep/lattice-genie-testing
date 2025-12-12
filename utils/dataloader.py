@@ -28,26 +28,19 @@ def get_drive():
 drive = get_drive()
 
 def append_to_jsonl(file_id, entry: dict):
-    # 1. Download current file
-    all_logs = drive.CreateFile({'id': ALL_LOGS_drive})
-    all_content = all_logs.GetContentString()
-
-    # 2. Append new JSON line
-    all_content += json.dumps(entry) + "\n"
-
-    # 3. Upload updated file
-    all_logs.SetContentString(all_content)
-    all_logs.Upload()
+   
      # 1. Download current file
     logs = drive.CreateFile({'id': file_id})
-    content = all_logs.GetContentString()
+    print(f"Downloaded file: {file_id}")
+    content = logs.GetContentString()
 
     # 2. Append new JSON line
     content += json.dumps(entry) + "\n"
-
+    print(f"File {file_id} appended with entry: {entry}")
     # 3. Upload updated file
     logs.SetContentString(content)
     logs.Upload()
+    print(f"File {file_id} updated")
 
 def user_name():
     username = ''
@@ -58,7 +51,8 @@ def user_name():
 if 'username' not in st.session_state:
     st.session_state['username'] = user_name()
     username = st.session_state['username']
-
+else:
+    username = st.session_state['username']
 ALL_LOGS_drive = "1eTJ0qRUJNLrlHkS9uZkc5UbTr5Ax5vxQ"
 ALL_LOGS, CHAT_HISTORY = '.logs/all_logs.jsonl', '.logs/chat_history.jsonl'
 def log_message(role, content):
@@ -80,7 +74,8 @@ def log_to_drive(log_file, drive_file):
             line = line.strip()
             if not line:
                 continue
-            append_to_jsonl(drive_file, json.loads(line.strip()))
+            append_to_jsonl(drive_file, json.loads(line))
+            print(f"{drive_file} updated with: {line}")
 
 def clear_drive_files(drive_file):
     file = drive.CreateFile({'id': drive_file})
@@ -122,7 +117,7 @@ def log_slider_changes(param_dict,mode):
                 pass
 
     # Check if the same param_dict already exists
-    existing_param_dicts = [entry["param_dict"] for entry in existing_entries]
+    existing_param_dicts = [ entry["param_dict"] for entry in existing_entries]
 
     with open(ALL_LOGS, "a", encoding="utf-8") as f:
         f.write(json.dumps(log_entry) + "\n")
@@ -152,8 +147,11 @@ LOG_SUBMISSION_FINAL = '.logs/log_submission_final.jsonl'
 
 def process_log_submission(log_submission_file):
     design_ques_dict = []
-    with open(LOG_SUBMISSION, "a", encoding="utf-8") as file:
-        for i in range(len(file)-1, -1, -1):
+    len_file = 0
+    with open(LOG_SUBMISSION, "r", encoding="utf-8") as file:
+        for line in file:
+            len_file += 1
+        for i in range(len_file-1, -1, -1):
             if file[i]["Design Question"] not in design_ques_dict:
                 design_ques_dict.append(file[i]["Design Question"])
                 with open(LOG_SUBMISSION_FINAL, "a", encoding="utf-8") as file2:
@@ -161,10 +159,26 @@ def process_log_submission(log_submission_file):
 
 
 def log_close_app():
+    if 'username' not in st.session_state:
+        st.session_state['username'] = user_name()
     log_entry = {
         "timestamp": datetime.datetime.now().isoformat(),
-        "username": username,
+        "username": st.session_state['username'],
         "event": "close app",
     }
-    with open(ALL_LOGS, "a", encoding="utf-8") as f:
-        f.write(json.dumps(log_entry) + "\n")
+    existing_entries = []
+    with open(ALL_LOGS, "r", encoding="utf-8") as f:
+        for line in f:
+                existing_entries.append(json.loads(line))
+    
+    count = 0
+    for entry in existing_entries:
+        if "username" in entry.keys():
+            pass
+        else:
+            count += 1
+    
+    if count == len(existing_entries):
+        
+        with open(ALL_LOGS, "a", encoding="utf-8") as f:
+            f.write(json.dumps(log_entry) + "\n")

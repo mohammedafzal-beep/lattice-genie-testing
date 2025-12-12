@@ -28,6 +28,7 @@ def left_column(data):
             if st.session_state['selected_subtype_list'][-2] != st.session_state['selected_subtype_list'][-1] or \
             st.session_state['selected_type_list'][-2] != st.session_state['selected_type_list'][-1]:
                 st.session_state["confirm"] = True
+               
                 log_event("Confirm", 'Pro mode')
             else:
                 st.write("You haven't selected a new structure. Try again!")

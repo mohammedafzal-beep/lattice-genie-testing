@@ -10,3 +10,4 @@ LOG_SLIDER_CHANGES_PERMANENT_drive, LOG_SUBMISSION_DRIVE]
 
 for i in range(len(LIST)):
     clear_drive_files(LIST[i])
+print("Done")
