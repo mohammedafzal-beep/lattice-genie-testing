@@ -5,9 +5,9 @@ from streamlit_stl import stl_from_file
 from utils.dataloader import log_event,log_slider_changes
 import time
 from utils.S_V_ratio import surface_area_to_volume_ratio
+from utils.dataloader import log_submission
 
 def show_parameter_sliders(data,mode):
-  if mode == 'Chat mode' or (mode == 'Pro mode' and st.session_state.get("confirm")):
     with st.sidebar:
         st.markdown("---")
         
@@ -51,6 +51,7 @@ def show_parameter_sliders(data,mode):
         
         with st.columns([2,6,1])[1]:
             button_placeholder = st.empty()
+
         schema = data["params_dict"].get(dict_key, 1)
         current_params = {}
         st.session_state['slider_placeholder'] = st.empty()
@@ -59,9 +60,10 @@ def show_parameter_sliders(data,mode):
                 val = labeled_slider(param_key, schema[param_key], current_params)
                 current_params[param_key] = val
         
-        changed = log_slider_changes(current_params,mode)
-        if changed:
-            
+        button_placeholder = st.button("Generate STL")
+        if button_placeholder:
+          changed = log_slider_changes(current_params,mode)
+          if changed:
             with st.session_state['spinner']:
                 st.markdown(
     """
@@ -124,7 +126,7 @@ def show_parameter_sliders(data,mode):
     font-weight: bold;
     margin-left: 12px;   /* <-- distance between text and number */
   ">
-  0
+  {surface_area_to_volume_ratio(path)}
   </span>
 </h2>
 """,
@@ -181,33 +183,8 @@ def show_parameter_sliders(data,mode):
                 st.session_state['stl_display'] = True
             
     if mode == 'Chat mode' and st.session_state['stl_display']:
-        if "current_index" not in st.session_state:
-            st.session_state.current_index = len(st.session_state['stl_files'])-1
-
-        col1, col2, col3 = st.columns([1,6,1])  # left button | viewer | right button
-
-        with col1:
-            if st.session_state.current_index > 0:
-                if st.button("←"):
-                    st.session_state.current_index -= 1
-
-        with col3:
-            if st.session_state.current_index < len(st.session_state['stl_files'])-1:
-                if st.button("→"):
-                    st.session_state.current_index += 1
-        with col2:
-            st.session_state['current_index'] = st.session_state['stl_files'].keys()[st.session_state.current_index]
-            if st.session_state['stl_files'] != {}:
-                stl_from_file(st.session_state['current_index'] ,st.session_state.get('stl_color', '#336fff'), 
-                        auto_rotate=True, width=700, height=500,cam_distance=100*(current_params['resolution']/50),
-                        cam_h_angle=45,cam_v_angle=75)
-                schema = data["params_dict"].get(st.session_state['dict_key'], 1)
-                st.session_state['slider_placeholder'].empty()
-                with st.session_state['slider_placeholder']:
-                    for param_key in schema:
-                        labeled_slider(param_key, schema[param_key], st.session_state['current_params'],preset=True)
-            else:
-              stl_from_file(st.session_state['stl_path'],st.session_state.get('stl_color', '#336fff'), 
+        
+        stl_from_file(st.session_state['stl_path'],st.session_state.get('stl_color', '#336fff'), 
                         auto_rotate=True, width=700, height=500,cam_distance=100*(current_params['resolution']/50),
                         cam_h_angle=45,cam_v_angle=75)
               
@@ -225,14 +202,16 @@ def show_parameter_sliders(data,mode):
             design_ques = st.selectbox("Design Question", design_ques_list, index=0)
             log_event(design_ques,'Chat mode')
         download_submit_tab = st.columns([1, 1, 1])
+        
+                
+        with open(st.session_state['stl_path'], 'rb') as f:
+           
+            with download_submit_tab[1]:
+                st.download_button('⬇️ Download STL', data=f.read(), file_name=st.session_state['stl_path'], mime='model/stl')
+                
+                log_event("Download", 'Chat mode')
+        
         with download_submit_tab[2]:
             if st.button('Submit'):
                 log_submission(st.session_state['stl_files'][st.session_state['current_index']] ,
                 design_ques, 'Chat Mode')
-                st.rerun() 
-        with open(stl_path, 'rb') as f:
-            
-            with download_submit_tab[0]:
-                st.download_button('⬇️ Download STL', data=f.read(), file_name=stl_path, mime='model/stl')
-                
-                log_event("Download", 'Chat mode')
