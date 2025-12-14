@@ -51,7 +51,7 @@ def visualize_overhang(mesh: pv.PolyData, threshold_angle: float = 45.0):
 
     # count the ratio of overhanging
     ratio = np.sum(overhang_faces) / len(face_angles)
-    # print(ratio)
+    """# print(ratio)
 
     # This is a visualizing function to validate the calculation overhanging. It will draw the picture of lattice structure. The red part of picture are overhanging parts.
     face_colors = np.zeros((mesh.n_cells, 3), dtype=np.uint8)
@@ -68,14 +68,14 @@ def visualize_overhang(mesh: pv.PolyData, threshold_angle: float = 45.0):
     plotter.add_mesh(mesh, scalars="face_colors", rgb=True, show_edges=True)
     plotter.add_legend([("Safe", "green"), ("Overhang > Threshold", "red")])
 
-    """
+    
     I find the direction of lattices from STL do not have the normal and even the same xyz direction and origin. 
     The z direction will determine the overhanging situation because the overhanging calculation is based on -z direction.
     I think the direction should be normalized when generating the lattice structure. Change the direction will be complex in the overhanging part.
     
     The direction of xyz axis is visualized accompanying with overhanging situation.
     The following part draws the origin and arrow which can display the lattice's direction (x,y,z) in STL file
-    """
+    
 
     origin = np.array([0, 0, 0])
     mesh_size = max(mesh.bounds[1] - mesh.bounds[0],
@@ -102,7 +102,7 @@ def visualize_overhang(mesh: pv.PolyData, threshold_angle: float = 45.0):
         # 标签
         plotter.add_point_labels([origin + vec], [label], font_size=20, point_color=color)
 
-    plotter.show()
+    plotter.show()"""
 
     return ratio, mesh
 
@@ -123,3 +123,4 @@ def surface_area_to_volume_ratio(file_path):
     ratio = mesh.area / mesh.volume
 
     return f"{ratio:.2f}"
+
