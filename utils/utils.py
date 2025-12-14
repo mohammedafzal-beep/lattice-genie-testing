@@ -54,7 +54,7 @@ def cleanup_stl_files_and_update_drive():
     LOG_FILES_LIST = [ALL_LOGS, CHAT_HISTORY, BUTTON_HISTORY, LOG_SLIDER_CHANGES_PERMANENT, 
     LOG_SUBMISSION, LOG_SUBMISSION_FINAL]
 
-    process_log_submission(LOG_SUBMISSION)
+    process_log_submission()
     ALL_LOGS_drive, CHAT_HISTORY_drive = "1eTJ0qRUJNLrlHkS9uZkc5UbTr5Ax5vxQ", "1ojmP_z1W1Q41velLHAjmhL1XmN-Sz7xt"
     BUTTON_HISTORY_drive = '1GU9Wg2bDDt2zhjqZNodwKr4oZeK-5_RB'
     LOG_SLIDER_CHANGES_PERMANENT_drive = '1jjcXv9vuy07ED1NSjJsdgP4NrgYk0bru'
@@ -516,9 +516,6 @@ def generate_stl(dict_key, params):
     func = dynamic_import('all_func', f'{dict_key}_' + func_name.lower(), func_name)
     filepath = func(**params)
     return filepath
-dict_key_index_map = {1: [0, 0], 2: [0, 1], 3: [0, 2], 4: [0, 3], 5: [0, 4], 6: [0, 5], 7: [0, 6], 8: [0, 7], 9: [0, 8], 10: [0, 9], 11: [0, 10], 12: [0, 11], 13: [0, 12], 14: [0, 13], 15: [1, 0], 16: [1, 1], 17: [1, 2], 18: [1, 3], 19: [1, 4], 20: [1, 5], 21: [1, 6], 22: [1, 7], 23: [1, 8], 24: [1, 9], 25: [1, 10], 26: [1, 11], 27: [1, 12], 28: [1, 13], 29: [2, 0], 30: [2, 1], 31: [2, 2], 32: [2, 3], 33: [2, 4], 34: [2, 5], 35: [2, 6], 36: [3, 0], 37: [3, 1], 38: [3, 2], 39: [3, 3], 40: [3, 4], 41: [3, 5], 
-42: [3, 6], 43: [3, 7], 44: [3, 8], 45: [3, 9], 46: [3, 10], 47: [3, 11], 48: [3, 12], 49: [3, 13], 50: [4, 0], 51: [4, 1], 52: [4, 2], 53: [4, 3], 54: [4, 4], 55: [4, 5], 56: [4, 6], 57: [4, 7], 58: [4, 8], 59: [4, 9], 60: [4, 10], 61: [4, 11], 
-62: [4, 12], 63: [4, 13]}
 def subtype_selection_to_dict_key(data):
     # data: full data dict from data.json
       # returns dict_key for the selected type/subtype in session_state
@@ -535,29 +532,31 @@ def subtype_selection_to_dict_key(data):
           local_count+=1
           global_count+=1
   type_list = list(types.keys()) if types else ['Unknown']
-  if st.session_state['switch']:
-    dict_key = st.session_state['stl_files'][st.session_state['current_index']][0]
-    [type_index, subtype_index] = dict_key_index_map[dict_key]
-  else:
-    [type_index, subtype_index] = [0,0]
-  selected_type = st.selectbox('Structure type', type_list, index=type_index)
-  if 'selected_type_list' not in st.session_state:
-    st.session_state['selected_type_list'] = [0,0]
-  st.session_state['selected_type_list'].append(selected_type)
   
+  selected_type = st.selectbox('Structure type', type_list, index=0)
+  if 'selected_type_list' not in st.session_state:
+     st.session_state['selected_type_list'] = []
+  if 'selected_subtype_list' not in st.session_state:
+     st.session_state['selected_subtype_list'] = []
   subtype_list = list(types.get(selected_type, {}).keys()) if types.get(selected_type) else ['Default']
-  selected_subtype = st.selectbox('Subtype', subtype_list, index=subtype_index)
-  st.session_state['selected_subtype_list'].append(selected_subtype)
+  selected_subtype = st.selectbox('Subtype', subtype_list, index=0)
 
   # derive dict_key
   dict_key = types[selected_type][selected_subtype]
   st.session_state['selected_type'] = selected_type
   st.session_state['selected_subtype'] = selected_subtype
   st.session_state['selected_dict_key'] = dict_key
+  
 
-  if st.session_state['selected_subtype_list'][-2] != st.session_state['selected_subtype_list'][-1] or \
-            st.session_state['selected_type_list'][-2] != st.session_state['selected_type_list'][-1]:
-
+  if len(st.session_state['selected_type_list']) >= 1:
+    if st.session_state['selected_subtype'] != st.session_state['selected_subtype_list'][-1] or \
+              st.session_state['selected_type'] != st.session_state['selected_type_list'][-1]:
+      st.session_state['selected_subtype_list'].append(st.session_state['selected_subtype'])
+      st.session_state['selected_type_list'].append(st.session_state['selected_type'])
+      log_event(f"Selected type: {st.session_state['selected_type_list'][-1]}", "Pro Mode")
+      log_event(f"Selected subtype: {st.session_state['selected_subtype_list'][-1]}", "Pro Mode")
+  else:
+    st.session_state['selected_subtype_list'].append(st.session_state['selected_subtype'])
+    st.session_state['selected_type_list'].append(st.session_state['selected_type'])
     log_event(f"Selected type: {st.session_state['selected_type_list'][-1]}", "Pro Mode")
     log_event(f"Selected subtype: {st.session_state['selected_subtype_list'][-1]}", "Pro Mode")
-
