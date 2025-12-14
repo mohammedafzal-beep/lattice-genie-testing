@@ -4,7 +4,7 @@ from components.chat import handle_user_input
 from components.parameter_ui import show_parameter_sliders
 from columns.left_col import left_column
 from columns.right_col import right_column
-from utils.dataloader import log_event
+from utils.dataloader import log_slider_changes
 
 def render_home(data):
     st.markdown("""
@@ -34,12 +34,8 @@ def render_home(data):
     st.markdown("---")
     st.markdown("<div class='center' style='margin-bottom:5px;'><h2 >💬 Ask to configure lattice:</h2></div>", unsafe_allow_html=True)
    
-    st.session_state['gen_struc'] = [0,0]
     with st.container():
       handle_user_input(data)
-      if (st.session_state['gen_struc'][-2] == True) and (st.session_state['gen_struc'][-1] == False):
-        st.session_state['stl_files'][st.session_state['stl_path']] = [st.session_state["dict_key"], 
-        st.session_state['current_params']]
       if st.session_state.get("confirmed_params"):
         show_parameter_sliders(data,'Chat mode')
 
@@ -69,23 +65,16 @@ def render_home_dropdown_version(data):
     display_thumbnails(data["crystal_images"],'Pro mode')
     st.markdown("---")
     left_col, right_col = st.columns([1,2])
-    st.session_state['selected_subtype_list'] = [0,0]
-    st.session_state['switch'] = False
 # Use the functions inside the with blocks
     with left_col:
         left_column(data)
     
     with st.sidebar:
-      if 'confirm' in st.session_state and st.session_state["confirm"]:
-          if 'stl_files' not in st.session_state:
-            st.session_state['stl_files'] = {}
-          st.session_state['stl_files'][st.session_state['stl_path']] = [st.session_state["dict_key"], 
-          st.session_state['current_params']]
-
       show_parameter_sliders(data,'Pro mode')
-
+      
+      
     with right_col:
-       right_column()
+       right_column(data)
     
     
 def display_thumbnails(images,mode):
