@@ -87,12 +87,19 @@ def log_event(button_name,mode):
     
     if 'username' not in st.session_state:
         st.session_state['username'] = user_name()
-  
+    
     log_entry = {
         "timestamp": datetime.datetime.now().isoformat(), "username": st.session_state['username'],
-        "button_name": button_name,
+        "event or button name": button_name,
         "mode": mode
     }
+    with open(BUTTON_HISTORY, "r", encoding="utf-8") as f:
+        for line in f:
+            old_entry = json.loads(line)
+            if 'event or button name' in list(old_entry.keys()) and \
+            old_entry['event or button name'] == 'App opened':
+                return 
+      
     with open(BUTTON_HISTORY, "a", encoding="utf-8") as f:
         f.write(json.dumps(log_entry) + "\n")
     with open(ALL_LOGS, "a", encoding="utf-8") as f:
@@ -117,15 +124,18 @@ def log_slider_changes(param_dict,mode):
                 pass
 
     # Check if the same param_dict already exists
-    existing_param_dicts = [ entry["param_dict"] for entry in existing_entries]
+    existing_param_dicts = [entry["param_dict"] for entry in existing_entries]
 
-    with open(ALL_LOGS, "a", encoding="utf-8") as f:
-        f.write(json.dumps(log_entry) + "\n")
-    with open(LOG_SLIDER_CHANGES_PERMANENT, "a", encoding="utf-8") as f:
-        f.write(json.dumps(log_entry) + "\n")
-
-    if param_dict not in existing_param_dicts:
+    if existing_param_dicts != [] and param_dict != existing_param_dicts[-1]:
         # Append to log files
+        with open(LOG_SLIDER_CHANGES_TEMPORARY, "a", encoding="utf-8") as f:
+            f.write(json.dumps(log_entry) + "\n")
+        with open(ALL_LOGS, "a", encoding="utf-8") as f:
+            f.write(json.dumps(log_entry) + "\n")
+        with open(LOG_SLIDER_CHANGES_PERMANENT, "a", encoding="utf-8") as f:
+            f.write(json.dumps(log_entry) + "\n")
+        return True
+    elif existing_param_dicts == []:
         with open(LOG_SLIDER_CHANGES_TEMPORARY, "a", encoding="utf-8") as f:
             f.write(json.dumps(log_entry) + "\n")
         return True
@@ -145,7 +155,7 @@ def log_submission(struc_info_list, design_ques,mode):
 
 LOG_SUBMISSION_FINAL = '.logs/log_submission_final.jsonl'
 
-def process_log_submission(log_submission_file):
+def process_log_submission():
     design_ques_dict = []
     len_file = 0
     with open(LOG_SUBMISSION, "r", encoding="utf-8") as file:
