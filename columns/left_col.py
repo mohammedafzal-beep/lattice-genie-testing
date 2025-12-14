@@ -20,27 +20,9 @@ def left_column(data):
     # Collect unique types and subtypes
     subtype_selection_to_dict_key(data)
 
-
-    st.write('')
-    selection_pane=st.columns([.7,5.3,1,4.5,1])
-    with selection_pane[1]:
-        if st.button('✅ Confirm'):
-            if st.session_state['selected_subtype_list'][-2] != st.session_state['selected_subtype_list'][-1] or \
-            st.session_state['selected_type_list'][-2] != st.session_state['selected_type_list'][-1]:
-                st.session_state["confirm"] = True
-               
-                log_event("Confirm", 'Pro mode')
-            else:
-                st.write("You haven't selected a new structure. Try again!")
-                log_event("User confirmed the same structure again", 'Pro mode')
-    with selection_pane[3]:
-            if st.button('❌ Reset '):
-                st.session_state["confirm"] = False
-                st.session_state['stl_path'] = None
-                st.session_state['stl_generated'] = False
-                st.session_state['current_params'] = None
-                st.session_state['selected_type'] = None
-                st.session_state['selected_subtype'] = None
-                st.session_state['selected_dict_key'] = None
-                log_event("Reset", 'Pro mode')
-                st.rerun()
+    if 'dict_key_list' not in st.session_state:
+        st.session_state['dict_key_list'] = [0]
+    if st.session_state['selected_dict_key'] != st.session_state['dict_key_list'][-1]:
+        st.session_state['dict_key_list'].append(st.session_state['selected_dict_key'])
+    #selection_pane=st.columns([.7,5.3,1,4.5,1])
+    
