@@ -10,13 +10,13 @@ def render_home(data):
     st.markdown("""
     <div class='center'>
       <h1 class='padding'>✨ Lattice Genie</h1>
-      <h5 class='center unbold bottom-margin'>Lattice Genie can generate lattice structures based on parameters</h5>
+      <h5 class='center unbold bottom-margin'>A comprehensive tool for 3D lattice structure generation</h5>
     </div>
                 <style>block-container, section.main > div {
   padding-top: 0 !important;
   margin-top: 0 !important;
 }
-.bottom-margin {margin-bottom: -38px !important;}
+.bottom-margin {margin-bottom: -23px !important;}
 /* your element move */
 .padding {
   margin-top: -57px !important;
@@ -24,8 +24,6 @@ def render_home(data):
   .center { text-align: center; }
     .unbold { font-weight: normal !important; }
     .padding {padding-top: 20px}
-  .stDownloadButton button { display: block; margin-left: auto; margin-right: auto; }
-  [data-testid='stHeaderActionElements'] {display: none;}
 
 </style>
 
@@ -44,7 +42,7 @@ def render_home_dropdown_version(data):
     st.markdown("""
     <div class='center'>
       <h1 class='padding'>✨ Lattice Genie</h1>
-      <h5 class='center unbold bottom-margin'>Lattice Genie can generate lattice structures based on parameters</h5>
+      <h5 class='center unbold bottom-margin'>A comprehensive tool for 3D lattice structure generation</h5>
     </div>
                 <style>block-container, section.main > div {
   padding-top: 0 !important;
@@ -56,13 +54,14 @@ def render_home_dropdown_version(data):
   margin-top: -57px !important;
     }
   .center { text-align: center; }
-    .unbold { font-weight: normal !important; } .bottom-margin {margin-bottom: -38px !important;}
+    .unbold { font-weight: normal !important; } .bottom-margin {margin-bottom: -36px !important;}
   .stDownloadButton button { display: block; margin-left: auto; margin-right: auto; }
   [data-testid='stHeaderActionElements'] {display: none;}
 
 </style>
     """, unsafe_allow_html=True)
     display_thumbnails(data["crystal_images"],'Pro mode')
+
     st.markdown("---")
     left_col, right_col = st.columns([1,2])
 # Use the functions inside the with blocks
@@ -86,7 +85,8 @@ def display_thumbnails(images,mode):
             except:
                 st.error(f"Couldn't load {name} image.")
             #st.markdown(f"<h4 style='text-align:center;font-weight: normal !important;'>{name}</h4>", unsafe_allow_html=True)
-            with st.columns([1,18,1])[1]:
+            with st.columns([1,17,1])[1]:
               if st.button(name,key=f'btn_{name}'):
                 st.session_state[f'go_{name}'] = True
                 st.rerun()
+    
