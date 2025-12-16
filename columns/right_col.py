@@ -9,26 +9,26 @@ def right_column(data):
         
         current_params = st.session_state['current_params']
         stl_from_file(st.session_state['stl_path'],st.session_state.get('stl_color', '#336fff'), 
-                auto_rotate=True, height=310,
-                cam_distance=84*(current_params['resolution']/50),cam_h_angle=45,cam_v_angle=75)
+                auto_rotate=True, height=250,
+                cam_distance=94*(current_params['resolution']/50),cam_h_angle=45,cam_v_angle=75)
         
             
         # Download button
         try:
-            design_ques_tab = st.columns([1, 1, 1])
-            design_ques_list = ["design ques 1",]
+            design_ques_tab = st.columns([1, 6, 1])
+            design_ques_list = ["design question 1",]
             with design_ques_tab[1]:
                 design_ques = st.selectbox("Design Question", design_ques_list, index=0)
                 log_event(design_ques,'Chat mode')
-            download_submit_tab = st.columns([1, 1])
+            download_submit_tab = st.columns([1,2,1.5,1])
             
             with open(st.session_state['stl_path'], 'rb') as f:
                 
-                with download_submit_tab[0]:
+                with download_submit_tab[1]:
                     st.download_button('⬇️ Download STL', data=f.read(), file_name=st.session_state['stl_path'], mime='model/stl')
                     log_event('Download','Pro mode')
             
-            with download_submit_tab[1]:
+            with download_submit_tab[2]:
                 if st.button('Submit'):
                     log_submission(st.session_state['confirmed_params'],design_ques, 'Pro Mode')
                     
