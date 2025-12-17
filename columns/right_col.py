@@ -16,7 +16,7 @@ def right_column(data):
         # Download button
         try:
             design_ques_tab = st.columns([1, 6, 1])
-            design_ques_list = ["design question 1",]
+            design_ques_list = ["Task 1","Task 2","Task 3","Task 4"]
             with design_ques_tab[1]:
                 design_ques = st.selectbox("Design Question", design_ques_list, index=0)
                 log_event(design_ques,'Chat mode')

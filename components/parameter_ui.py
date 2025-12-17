@@ -4,7 +4,7 @@ from utils.utils import labeled_slider,generate_stl
 from streamlit_stl import stl_from_file
 from utils.dataloader import log_event,log_slider_changes
 import time
-from utils.S_V_ratio import surface_area_to_volume_ratio
+from utils.S_V_ratio import surface_area_to_volume_ratio, vol_ratio
 from utils.dataloader import log_submission
 
 def show_parameter_sliders(data,mode):
@@ -141,8 +141,7 @@ margin-bottom: -10px;
 text-align: left;
 padding-left: 0px;
 font-size: 19px;
-">
-Surface Area to Volume Ratio:
+"> Volume ratio (VR):
 <span style="
 display: inline-block;
 padding: 4px 10px;
@@ -153,6 +152,29 @@ font-weight: bold;
 margin-left: 12px;
 margin-bottom: 23px;   /* <-- distance between text and number */
 ">
+{vol_ratio(path)}
+</span>
+<p>\n</p>
+<p style="
+color: #ffffff;
+margin-top: -30px;
+margin-bottom: -10px;
+text-align: left;
+padding-left: 0px;
+font-size: 19px;
+">
+Surface Area to Volume (SA/V) Ratio:
+<span style="
+display: inline-block;
+padding: 4px 10px;
+background: #e0e0e0;
+color: #00aa00;
+border-radius: 6px;
+font-weight: bold;
+margin-left: 12px;
+margin-bottom: 23px;   /* <-- distance between text and number */
+">
+
 {surface_area_to_volume_ratio(path)}
 </span>
 </h2>

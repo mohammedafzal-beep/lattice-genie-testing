@@ -2,6 +2,16 @@
 import numpy as np
 import pyvista as pv
 
+def vol_ratio(file_path):
+    m = mesh.Mesh.from_file(file_path)
+
+    solid_volume, _, _ = m.get_mass_properties()
+
+    points = m.vectors.reshape(-1, 3)
+    bbox_volume = np.prod(points.max(axis=0) - points.min(axis=0))
+
+    ratio = solid_volume / bbox_volume
+    return ratio
 
 def visualize_overhang(mesh: pv.PolyData, threshold_angle: float = 45.0):
     """

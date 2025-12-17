@@ -15,6 +15,16 @@ def run_app():
     log_event("App opened", "Chat Mode")
     reset_home_flag('Chat mode')
     page = st.sidebar.radio('', data["pages"], key="current_page")
+    st.sidebar.markdown("---")
+    st.sidebar.markdown('''Task 1:\n 0.4 < VR < 0.6 \n
+    SA/V > 1.5\n
+    Task 2:\n 0.2 < VR < 0.3\n
+    SA/V > 2\n
+    Task 3:\n 0.5 < VR < 0.55 \n
+    SA/V > 2.5\n
+    Task 4: Design a structure that meets VR requirement but maximises SA/V ratio\n
+    VR = 0.4 +(-.03)
+    ''')
     count = 0
     atexit.register(cleanup_stl_files_and_update_drive)
     if page == "Home":
