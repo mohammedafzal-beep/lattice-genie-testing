@@ -18,8 +18,8 @@ def right_column(data):
             design_ques_tab = st.columns([1, 6, 1])
             design_ques_list = ["Task 1","Task 2","Task 3","Task 4"]
             with design_ques_tab[1]:
-                design_ques = st.selectbox("Design Question", design_ques_list, index=0)
-                log_event(design_ques,'Chat mode')
+                design_ques = st.selectbox("Design Task", design_ques_list, index=0)
+                log_event(design_ques,'Pro mode')
             download_submit_tab = st.columns([1,2,1.5,1])
             
             with open(st.session_state['stl_path'], 'rb') as f:
@@ -30,7 +30,9 @@ def right_column(data):
             
             with download_submit_tab[2]:
                 if st.button('Submit'):
-                    log_submission(st.session_state['confirmed_params'],design_ques, 'Pro Mode')
+                    struc_info = st.session_state['dict_key'] + st.session_state['current_params']
+                    log_submission(struc_info,
+                    design_ques, 'Pro Mode')
                     
         except Exception:
             st.warning('STL file not available for download. Generate again.')

@@ -141,11 +141,11 @@ def log_slider_changes(param_dict,mode):
         return True
 
 LOG_SUBMISSION = '.logs/log_submission.jsonl'
-def log_submission(struc_info_list, design_ques,mode):
+def log_submission(struc_info, design_ques,mode):
     log_entry = {"timestamp": datetime.datetime.now().isoformat(),
         "username": username,
         "Design Question": design_ques,
-        "Parameter dict": struc_info_list,
+        "Parameter dict": struc_info,
         "Mode": mode
     }
     with open(LOG_SUBMISSION, "a", encoding="utf-8") as f:
@@ -162,8 +162,8 @@ def process_log_submission():
         for line in file:
             len_file += 1
         for i in range(len_file-1, -1, -1):
-            if file[i]["Design Question"] not in design_ques_dict:
-                design_ques_dict.append(file[i]["Design Question"])
+            if file[i]["Design Question"] not in list(design_ques_dict.keys()):
+                design_ques_dict.append(file[i]['Design Question'])
                 with open(LOG_SUBMISSION_FINAL, "a", encoding="utf-8") as file2:
                     file2.write(json.dumps(file[i]) + "\n")
 

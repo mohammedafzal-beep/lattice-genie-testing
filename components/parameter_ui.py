@@ -215,9 +215,9 @@ unsafe_allow_html=True
         st.session_state['Scroll message'].empty()
         
         design_ques_tab = st.columns([1, 1, 1])
-        design_ques_list = ["design ques 1",]
+        design_ques_list = ["Task 1","Task 2","Task 3","Task 4",]
         with design_ques_tab[1]:
-            design_ques = st.selectbox("Design Question", design_ques_list, index=0)
+            design_ques = st.selectbox("Design Task", design_ques_list, index=0)
             log_event(design_ques,'Chat mode')
         download_submit_tab = st.columns([1, 1, 1])
         
@@ -231,5 +231,6 @@ unsafe_allow_html=True
         
         with download_submit_tab[2]:
             if st.button('Submit'):
-                log_submission(st.session_state['stl_files'][st.session_state['current_index']] ,
+                struc_info = st.session_state['dict_key'] + st.session_state['current_params']
+                log_submission(struc_info,
                 design_ques, 'Chat Mode')
